@@ -11811,7 +11811,7 @@ div#notebook {
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;census.csv&quot;</span><span class="p">)</span>
 
 <span class="c1"># Success - Display the first record</span>
-<span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 
 </div>
@@ -14180,7 +14180,7 @@ $$ F_{\beta} = (1 + \beta^2) \cdot \frac{precision \cdot recall}{\left( \beta^2 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># TODO: Calculate accuracy</span>
@@ -14188,8 +14188,8 @@ $$ F_{\beta} = (1 + \beta^2) \cdot \frac{precision \cdot recall}{\left( \beta^2 
 
 <span class="c1"># TODO: Calculate F-score using the formula above for beta = 0.5</span>
 <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span>
-<span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1">#since all the &gt;50K are found, precision is 1</span>
-<span class="n">r</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">n_greater_50k</span><span class="o">/</span><span class="n">n_records</span> <span class="c1">#recall</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">n_greater_50k</span><span class="o">/</span><span class="n">n_records</span> <span class="c1">#precision </span>
+<span class="n">r</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1">#since all the &gt;50K are found, recall is 1</span>
 <span class="n">fscore</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">p</span><span class="o">*</span><span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="n">r</span><span class="p">)</span>
 
 <span class="c1"># Print the results </span>
@@ -14206,7 +14206,7 @@ $$ F_{\beta} = (1 + \beta^2) \cdot \frac{precision \cdot recall}{\left( \beta^2 
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Naive Predictor: [Accuracy score: 0.2478, F-score: 0.6223]
+<pre>Naive Predictor: [Accuracy score: 0.2478, F-score: 0.2917]
 </pre>
 </div>
 </div>
@@ -14264,7 +14264,7 @@ $$ F_{\beta} = (1 + \beta^2) \cdot \frac{precision \cdot recall}{\left( \beta^2 
 </li>
 <li><p>Inherently, decision trees do not look at the whole feature space when training the classifier, with each branch leading to higher potential of bias. This effect is called a 'greedy' classifier.</p>
 </li>
-<li><p>Much of the data is binary, which makes the entropy/information gain simpler to calculate.</p>
+<li><p>Since we are working with both categorical and continuous feature data, decision trees can address this feature space well. Also, some of the features may have non-linear or multiple decision boundaries, like age, capital-gain/loss, or hours-per-week. Decision trees can address these scenarios, whereas linear classifier cannot.</p>
 </li>
 </ol>
 <p>references: 
@@ -14293,7 +14293,7 @@ $$ F_{\beta} = (1 + \beta^2) \cdot \frac{precision \cdot recall}{\left( \beta^2 
 </li>
 <li><p>Logistic Regression cannot predict continuous values, that is it may only predict categorical values. Logistic Regression also assumes that all data points are independent of eachother. If say a data set has multiple data points observed from one source, the model may overfit to fit that source.</p>
 </li>
-<li><p>Since there are only two output labels (&gt;50K, and &lt;=50K), logistic regression can be simply implemented with this data set.</p>
+<li><p>Logistic regression will find a smoother decision boundary than the decision tree classifier, which should reduce overfitting. Since logistic regression is a simple linear regression classifier, it will train much faster than say a SVM classifier. This data set like has co-related features or conditionally dependant features (ex: education-num and occupation). Logistic regression is not affected by conditionally dependent features, whereas a Naive Bayes classifier may lose accuracy.</p>
 </li>
 </ol>
 <p>references:
@@ -15728,7 +15728,7 @@ AABJRU5ErkJggg==
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
-<p>For the task of finding appropriate donors, we favor high accuracy and recall (F0.5-score) on the test data when choosing classifier. We do not care that much about training time, since we would only do this once with the training dataset. We do care about prediction time to some degree, depending on how and when the list of potential donors is created. If the list of donors is created in real-time using new data, say before calling a potential donor, then we care about prediction time. If a list is created once per morning with a new data-set, or even only once ever, then prediction time is not that important.</p>
+<p>For the task of finding appropriate donors, we favor high accuracy and precision (F0.5-score) on the test data when choosing classifier. We do not care that much about training time, since we would only do this once with the training dataset. We do care about prediction time to some degree, depending on how and when the list of potential donors is created. If the list of donors is created in real-time using new data, say before calling a potential donor, then we care about prediction time. If a list is created once per morning with a new data-set, or even only once ever, then prediction time is not that important.</p>
 <p>The clear winner is : Logistic Regression. 
 Over all sizes of data sets Logistic Regression scores the highest accuracy and f-score. At 100% of the data, Logistic Regression has an accuracy of ~83% and f-score of ~0.7. 
 Logistic Regression also has the lowest model prediction time out of the 3 classifiers selected, with a prediction time of ~3ms. 
@@ -15757,7 +15757,11 @@ The training time for Logistic Regression is much higher than SDG by about a mul
 <p>Logistic Regression is a supervised machine learning model, which is used to predict the probability of a certain class or category, given a set of input data or features of a data-point. The model falls under 'supervised' machine learning category since it uses a large set of pre-labeled data to learn or 'train' over. After the model has been sufficiently trained, it can be used to predict the probability that a new data point can bee classified as one of the labels.</p>
 <p>An example would be a model that will predict whether a bank loan candidate may default on their loan or not, given input data about the candidate (age, income, assets, location, car color, etc... ). To train this example model, we would need a large data set of past bank-loanees, their input data, and whether they had defaulted on their loan or paid them in full.</p>
 <p>Logistic Regression is differentiated from other supervised learning techniques in that the output classification is binary, meaning true or false, 1 or 0. For cases where there are more than two classes to be classified, the model would be applied once for each class, returning a true of false value for each class.</p>
-<p>Logistic Regression trains over test data by iterating through each labeled training data point, applying the model, checking to see if the prediction is correct, and incrementally modifying internal parameters to reduce the prediction error. If this process is done using a large enough training data set, the model should be able to predict new or test data with decent accuracy!</p>
+<p>Logistic Regression trains over test data by iterating through each labeled training data point, applying the model, checking to see if the prediction is correct, and incrementally modifying internal parameters to reduce the prediction error. 
+The Logistic Regression model is can be visualized in 2-dimensions (2 input features) as a scatter plot of labeled data (0 or 1), where a linear decision boundary splits the data into two sections. The two sections correspond with the predicted label. As you may guess, a linear decision boundary may not predict all the training data correctly, this is called error. Over the iteration of the learning algorithm, the goal is to optimize the co-efficients of the decision boundary line to minimize this prediction error. The eco-efficients are optimized using a regression algorithm (such as gradient descent), which incrementally changes the co-efficients, and tests on new training data, to converge on the co-efficient values that minimizes the prediction error. 
+Logisitic Regression can be implemented with larger feature dimensions than 2, in fact you may use as many as you like, but with every new feature, the learning cost increases exponentially. 
+Logistic Regression is named 'logistic' because of the formula used to calculate the probability of a label, given the input feature data. Simply put, if you take the natural log of the formula, you get the linear decision boundary equation. 
+If this process is done using a large enough training data set, the model should be able to predict new or test data with decent accuracy!</p>
 
 </div>
 </div>
@@ -15901,7 +15905,7 @@ Final F-score on the testing data: 0.7018
 </tr>
 <tr>
 <td style="text-align:center">F-score</td>
-<td style="text-align:center">0.6223</td>
+<td style="text-align:center">0.2917</td>
 <td style="text-align:center">0.6993</td>
 <td style="text-align:center">0.7018</td>
 </tr>
@@ -15916,9 +15920,8 @@ Final F-score on the testing data: 0.7018
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong>
-The optimized parameter C=10.0 (solver=linlinear is the default value, as well as the best performing value), improved the accuracy and F-score only VERY marginally over the un-optimized model. The optimized parameter improves the accuracy and f-score by less than a percentage point over the unoptimized model.</p>
-<p>Compared to the naive predictor, the optimized accuracy improved by 342%, and f-score improved by about 12%. So accuracy has significantly improved, while recall has improved by a small amount.</p>
+<h2 id="Answer:-"><strong>Answer: </strong><a class="anchor-link" href="#Answer:-">&#182;</a></h2><p>The optimized parameter C=10.0 (solver=linlinear is the default value, as well as the best performing value), improved the accuracy and F-score only VERY marginally over the un-optimized model. The optimized parameter improves the accuracy and f-score by less than a percentage point over the unoptimized model.</p>
+<p>Compared to the naive predictor, the optimized accuracy improved by 242%, and f-score improved by about 140%. So accuracy has significantly improved, while recall has improved by a smaller but also significant amount.</p>
 
 </div>
 </div>
@@ -16553,7 +16556,7 @@ The feature I was wrong about was 'native-country'. I should have known better, 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Import functionality for cloning a model</span>
@@ -16622,8 +16625,7 @@ F-score on testing data: 0.5998
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
-<p>After reducing the number of features to the 5 most relavent to the AdaBoost classifier, the accuracy dropped by 4.8%, and the f-score dropped by 14.5%. This is a pretty significant drop, especially for the f-score, which performs worse than the 
-naive predictor! Maybe this is due to the differences between AdaBoost and Logistic Regression.</p>
+<p>After reducing the number of features to the 5 most relavent to the AdaBoost classifier, the accuracy dropped by 4.8%, and the f-score dropped by 14.5%. Maybe this is due to the differences between AdaBoost and Logistic Regression.</p>
 <p>I would not sacrifice the accuracy and f-score reductions by reducing the number of features in this case, even for a reduced training time.</p>
 
 </div>
