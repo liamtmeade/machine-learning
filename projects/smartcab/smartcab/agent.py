@@ -158,7 +158,8 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (inputs['light'], inputs['left'], inputs['right'], inputs['oncoming'], waypoint)
+        #state = (inputs['light'], inputs['left'], inputs['right'], inputs['oncoming'], waypoint)
+        state = (inputs['light'], inputs['left'], inputs['oncoming'], waypoint)
 
         return state
 
@@ -193,10 +194,11 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
         
-        if state in self.Q:
-            pass
-        else:
-            self.Q[state] = {None:0.0, 'forward':0.0, 'left':0.0, 'right':0.0}
+        if self.learning:
+            if state in self.Q:
+                pass
+            else:
+                self.Q[state] = {None:0.0, 'forward':0.0, 'left':0.0, 'right':0.0}
         return
 
 
@@ -245,7 +247,8 @@ class LearningAgent(Agent):
         
         #Q(s, a) = (1-alpha)*Q(s, a) + alpha*(reward + gamma*maxQ(nextState, nextAction))
         
-        self.Q[state][action] = (1-self.alpha) * self.Q[state][action] + self.alpha*reward
+        if self.learning:
+            self.Q[state][action] = (1-self.alpha) * self.Q[state][action] + self.alpha*reward
         
         return
 
